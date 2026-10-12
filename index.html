@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>THWS M2IV – Stundenplan-Kalender</title>
+  <style>
+    :root { color-scheme: light dark; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { max-width: 760px; margin: 3rem auto; padding: 0 1.25rem; line-height: 1.6; }
+    a { overflow-wrap: anywhere; }
+    .link { display: inline-block; padding: .7rem 1rem; border: 1px solid currentColor; border-radius: .6rem; text-decoration: none; }
+    small { opacity: .75; }
+  </style>
+</head>
+<body>
+  <h1>THWS M2IV – Stundenplan-Kalender</h1>
+  <p>Dieser Kalender wird automatisch aus dem öffentlich zugänglichen Stundenplan der THWS Business School erzeugt.</p>
+  <p><a class="link" href="stundenplan.ics">Kalenderdatei öffnen (ICS)</a></p>
+  <p><strong>Quelle:</strong> <a href="https://business.thws.de/fileadmin/share/vlplan/M2IV%201%20WS%2026_27.html">THWS-Stundenplan M2IV, 1. Semester</a></p>
+  <p id="status">Status wird geladen …</p>
+  <small>Der Feed ist öffentlich. Änderungen können erst nach dem nächsten erfolgreichen Abruf der THWS-Seite und der nächsten Aktualisierung durch deine Kalender-App sichtbar sein. Bei kurzfristigen Änderungen gilt die Originalseite.</small>
+  <script>
+    fetch('status.json', { cache: 'no-store' })
+      .then(response => { if (!response.ok) throw new Error('Status nicht verfügbar'); return response.json(); })
+      .then(s => {
+        const checked = s.last_checked_utc ? new Date(s.last_checked_utc).toLocaleString('de-DE') : 'unbekannt';
+        const source = s.source_last_updated ? new Date(s.source_last_updated).toLocaleString('de-DE') : 'nicht erkannt';
+        document.getElementById('status').textContent = `Erkannte Termine: ${s.event_count}. Letzter Abruf: ${checked}. Stand der THWS-Seite: ${source}.`;
+      })
+      .catch(() => { document.getElementById('status').textContent = 'Der Kalender wurde noch nicht erfolgreich veröffentlicht.'; });
+  </script>
+</body>
+</html>
